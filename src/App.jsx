@@ -47,12 +47,18 @@ class App extends Component {
     }, 3000);
   }
 
+  addMessage = (message) => {
+    console.log('addMessage - ' + JSON.stringify(message));
+    const messages = this.state.messages.concat(message);
+    this.setState({messages: messages});
+  }
+
   render() {
     return (
       <div>
         <Nav />
         <MessageList messages={this.state.messages}/>
-        <ChatBar currentUser={this.state.currentUser}/>
+        <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage}/>
       </div>
     );
   }
