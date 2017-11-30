@@ -7,6 +7,10 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+    
+    // create new web socket and store in class member variable socket
+    this.socket = new WebSocket("ws://localhost:3001", ["protocolOne", "protocolTwo"]);
+
     this.state = {
       currentUser: {name: 'Bob'}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: [
@@ -34,7 +38,6 @@ class App extends Component {
   // runs when components mount
   componentDidMount() {
     console.log("componentDidMount <App />");
-
     // run 3 seconds after component is mounted
     setTimeout(() => {
       console.log("Simulating incoming message");
@@ -48,8 +51,9 @@ class App extends Component {
   }
 
   addMessage = (message) => {
-    console.log('addMessage - ' + JSON.stringify(message));
     const messages = this.state.messages.concat(message);
+    // TODO: send this message to the server
+    this.socket.send(JSON.stringify(message));
     this.setState({messages: messages});
   }
 
