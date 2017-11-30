@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import uuidv4 from 'uuid/v4';
 
 class ChatBar extends Component {
   constructor(props) {
@@ -7,17 +8,6 @@ class ChatBar extends Component {
       username: props.currentUser.name,
       message: ''
     };
-  }
-
-  // generate guid for message
-  guid() {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-      s4() + '-' + s4() + s4() + s4();
   }
 
   // update username state on input change (chatbar-username)
@@ -39,7 +29,7 @@ class ChatBar extends Component {
   _handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       this.props.addMessage({
-        id: this.guid(),
+        id: uuidv4(),
         username: this.state.username,
         content: this.state.message,
         type: 'normal'
