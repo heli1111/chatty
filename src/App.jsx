@@ -51,10 +51,9 @@ class App extends Component {
   }
 
   addMessage = (message) => {
-    const messages = this.state.messages.concat(message);
-    // TODO: send this message to the server
     this.socket.send(JSON.stringify(message));
-    this.setState({messages: messages});
+    //const messages = this.state.messages.concat(message);
+    //this.setState({messages: messages});
   }
 
   render() {
