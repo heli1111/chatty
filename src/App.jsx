@@ -2,49 +2,53 @@ import React, {Component} from 'react';
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
 import Nav from './Nav.jsx';
+import uuidv4 from 'uuid/v4';
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-    
-    // create new web socket and store in class member variable socket
-    this.socket = new WebSocket("ws://localhost:3001");
-    
-    this.socket.onmessage = (event) => {
-      let message = JSON.parse(event.data);
-      const messages = this.state.messages.concat(message);
-      this.setState({messages: messages});
-    };
-
     this.state = {
       currentUser: {name: 'Bob'}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: []
-      /*
-        {
-          id: 0,
-          username: 'Bob',
-          content: 'Has anyone seen my marbles?',
-          type: 'normal'
-        },
-        {
-          id: 1,
-          username: 'Anonymous',
-          content: 'No, I think you lost them. You lost your marbles Bob. You lost them for good.',
-          type: 'normal'
-        },
-        {
-          id: 2,
-          content: 'Anonymous1 changed their name to nomnom.',
-          type: 'system'
-        }
-        */
-    }    
+    }
   }
 
   // runs when components mount
   componentDidMount() {
-    console.log("componentDidMount <App />");
+    // create new web socket and store in class member variable socket
+    this.socket = new WebSocket("ws://localhost:3001");
+
+    this.socket.onopen = (event) => {
+      console.log("Connected to server");
+    };
+
+    this.socket.onmessage = (event) => {
+      let data = JSON.parse(event.data);
+      switch(data.type) {
+        case 'incomingMessage': 
+          this.setState({messages: this.state.messages.concat(data)});
+          break;
+        case 'incomingNotification':
+          this.setState({messages: this.state.messages.concat(data)});
+          break;
+        default:
+          throw new Error("Unknown event type " + data.type);
+      }
+    };
+  }
+
+  changeUsername = (newUsername) => {
+    if (this.state.currentUser.name === newUsername) {
+        return;
+    }
+    const notification = {
+      id: uuidv4(),
+      content: this.state.currentUser.name + " changed their name to " + newUsername,
+      type: "postNotification"
+    }
+    this.socket.send(JSON.stringify(notification));
+    this.setState({currentUser: {name: newUsername}});
   }
 
   addMessage = (message) => {
@@ -55,10 +59,11 @@ class App extends Component {
     return (
       <div>
         <Nav />
-        <MessageList messages={this.state.messages}/>
-        <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage}/>
+        <MessageList messages={this.state.messages} />
+        <ChatBar changeUsername={this.changeUsername} currentUser={this.state.currentUser} addMessage={this.addMessage} />
       </div>
     );
   }
 }
+
 export default App;

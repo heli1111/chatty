@@ -5,7 +5,7 @@ class ChatBar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: props.username,
+      username: this.props.currentUser.name,
       message: ''
     };
   }
@@ -21,22 +21,23 @@ class ChatBar extends Component {
   _updateMessage = (event) => {
     this.setState({
       message: event.target.value
-    })
+    });
   }
 
   // handle key press and call parent addMessage function
   // to add new message to chat log
-  _handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+  _handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
       this.props.addMessage({
         id: uuidv4(),
         username: this.state.username,
         content: this.state.message,
-        type: 'normal'
+        type: 'postMessage'
       });
       this.setState({
         message: ''
       });
+      this.props.changeUsername(this.state.username);
     }
   }
 

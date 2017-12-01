@@ -21,11 +21,14 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', (ws) => {
   console.log('Client connected');
 
-  ws.on('message', (message) => {
-    console.log('received: %s', message);
+  ws.on('message', (data) => {
+    console.log('received: %s', data);
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
+        message = JSON.parse(data);
+        message.type = message.type.replace('post', 'incoming');
+        console.log("sending: %s", JSON.stringify(message));
+        client.send(JSON.stringify(message));
       }
     })
   });
