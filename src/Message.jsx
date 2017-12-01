@@ -31,11 +31,11 @@ class Message extends Component {
 
             return (
                 <div>
-                <div className="message">
-                    <span style={colorStyle} className="message-username">{this.props.message.username}</span>
-                    <span className="message-content">{content}</span>
-                </div>
-                {imageList}
+                    <div className="message">
+                        <span style={colorStyle} className="message-username">{this.props.message.username}</span>
+                        <span className="message-content">{content}</span>
+                    </div>
+                    {imageList}
                 </div>
             )
         } else if (this.props.message.type == 'incomingNotification') {
