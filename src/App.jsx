@@ -10,7 +10,8 @@ class App extends Component {
     super(props);
     this.state = {
       currentUser: {name: 'Bob'}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: []
+      messages: [],
+      totalUsers: 0
     }
   }
 
@@ -31,6 +32,9 @@ class App extends Component {
           break;
         case 'incomingNotification':
           this.setState({messages: this.state.messages.concat(data)});
+          break;
+        case 'incomingUsers':
+          this.setState({totalUsers: data.content});
           break;
         default:
           throw new Error("Unknown event type " + data.type);
@@ -58,7 +62,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Nav />
+        <Nav totalUsers={this.state.totalUsers} />
         <MessageList messages={this.state.messages} />
         <ChatBar changeUsername={this.changeUsername} currentUser={this.state.currentUser} addMessage={this.addMessage} />
       </div>
